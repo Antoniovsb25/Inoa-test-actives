@@ -13,12 +13,12 @@ const BASE_URL = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&s
 const PORT = "4567";
 
 app.post("/", (req, res) => {
+    console.log(req.body.inputActive)
     res.send(req.body)
 })
 
 app.get("/", async (req, res) => {
   const { data } = await axios(BASE_URL);
-  console.log(response)
   return res.json(data);
 });
 

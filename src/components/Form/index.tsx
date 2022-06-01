@@ -1,5 +1,7 @@
 import { useState } from "react";
 import Graphic from "./components/Graphic";
+import axios from "axios";
+import styles from "./Form.module.css"
 
 const Form = () => {
   const [loading, setLoading] = useState(false);
@@ -12,18 +14,23 @@ const Form = () => {
 
   const postActivesName = async (e: any) => {
     e.preventDefault();
-    const teste = { inputActive }
-    console.log("lastState", teste)
     try {
-      const response = await fetch("http://localhost:4567/", {
-        method: "POST",
-        body: JSON.stringify(inputActive),
-        headers: { "content-type": "application/json" },
-      });
-      console.log("success!")
-      console.log("response", response)
+      const { data } = await axios.post("http://localhost:4567/", { inputActive })
+      getActivesContent();
+    } catch (error) {
+        console.log(error);
+    }
+  };
+
+  const getActivesContent = async () => {
+    setLoading(true);
+    try {
+      const { data } = await axios.get("http://localhost:4567/");
+      setLoading(false);
+      setActives(data["Time Series (Daily)"]);
     } catch (error) {
       console.log("something went wrong when fetching data", error);
+      setLoading(false);
     }
   };
 
@@ -33,24 +40,12 @@ const Form = () => {
     setInputActive(newData);
   };
 
-  const getActivesContent = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch("http://localhost:4567/");
-      const data = await response.json();
-      setLoading(false);
-      setActives(data["Time Series (Daily)"]);
-    } catch (error) {
-      console.log("something went wrong when fetching data", error);
-      setLoading(false);
-    }
-  };
-
   return (
     <>
-      <section>
-        <form onSubmit={postActivesName}>
-          <label htmlFor="active">Ação: </label>
+      <section className={styles.formContainer}>
+          <h1>consulte o preço de fechamento diário de um ou mais ativos da B3</h1>
+        <form className={styles.form} onSubmit={postActivesName}>
+          <label htmlFor="active">Nome do ativo: </label>
           <input
             type="text"
             id="active"
@@ -58,7 +53,7 @@ const Form = () => {
             value={inputActive.active}
             onChange={(e) => handleInput(e)}
           />
-          <label htmlFor="initial_date">Data Inicial: </label>
+          <label htmlFor="initial_date">Data de início da consulta: </label>
           <input
             type="date"
             id="initial_date"
@@ -66,7 +61,7 @@ const Form = () => {
             value={inputActive.initial_date}
             onChange={(e) => handleInput(e)}
           />
-          <label htmlFor="final_date">Data Final: </label>
+          <label htmlFor="final_date">Data de fim da consulta: </label>
           <input
             type="date"
             id="final_date"
@@ -76,11 +71,8 @@ const Form = () => {
           />
           <button>POST DATA</button>
         </form>
-        <button type="button" onClick={getActivesContent}>
-          Fetch Data
-        </button>
-        <Graphic loading={loading} actives={actives} />
       </section>
+      <Graphic loading={loading} actives={actives} />
     </>
   );
 };
