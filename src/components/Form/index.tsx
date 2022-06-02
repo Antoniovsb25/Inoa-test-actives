@@ -1,78 +1,81 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import Graphic from "./components/Graphic";
 import axios from "axios";
-import styles from "./Form.module.css"
+import styles from "./Form.module.css";
+import fullDate from "../../helpers/fullDate.js";
 
 const Form = () => {
   const [loading, setLoading] = useState(false);
-  const [actives, setActives] = useState({});
-  const [inputActive, setInputActive] = useState({
-    active: "",
-    initial_date: "",
-    final_date: "",
-  });
+  const [actives, setActives] = useState({active: 0});
+  const [activeName, setActiveName] = useState("");
+  const [initialDate, setInitialDate] = useState("");
+  const [finalDate, setFinalDate] = useState(fullDate);
 
-  const postActivesName = async (e: any) => {
+  const postActivesName = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    try {
-      const { data } = await axios.post("http://localhost:4567/", { inputActive })
-      getActivesContent();
-    } catch (error) {
-        console.log(error);
-    }
-  };
-
-  const getActivesContent = async () => {
     setLoading(true);
     try {
-      const { data } = await axios.get("http://localhost:4567/");
+      const { data } = await axios.get(
+        `http://localhost:4567/?activeName=${activeName}&initialDate=${initialDate}&finalDate=${finalDate}`
+      );
       setLoading(false);
-      setActives(data["Time Series (Daily)"]);
+      if (data["Time Series (Daily)"]) {
+        setActives(prevState => {
+            return {...prevState, active: data["Time Series (Daily)"]}
+        });
+      }
     } catch (error) {
-      console.log("something went wrong when fetching data", error);
+      console.log(error);
       setLoading(false);
     }
-  };
-
-  const handleInput = (e: any) => {
-    const newData = { ...inputActive };
-    newData[e.target.id] = e.target.value;
-    setInputActive(newData);
   };
 
   return (
     <>
       <section className={styles.formContainer}>
-          <h1>consulte o preço de fechamento diário de um ou mais ativos da B3</h1>
+        <h1>
+          consulte o preço de fechamento diário de um ou mais ativos da B3
+        </h1>
         <form className={styles.form} onSubmit={postActivesName}>
           <label htmlFor="active">Nome do ativo: </label>
           <input
             type="text"
             id="active"
             name="active"
-            value={inputActive.active}
-            onChange={(e) => handleInput(e)}
+            value={activeName}
+            required
+            onChange={(e) => setActiveName(e.currentTarget.value)}
           />
           <label htmlFor="initial_date">Data de início da consulta: </label>
           <input
             type="date"
             id="initial_date"
             name="initial_date"
-            value={inputActive.initial_date}
-            onChange={(e) => handleInput(e)}
+            value={initialDate}
+            required
+            max={fullDate}
+            onChange={(e) => setInitialDate(e.currentTarget.value)}
           />
           <label htmlFor="final_date">Data de fim da consulta: </label>
           <input
             type="date"
             id="final_date"
             name="final_date"
-            value={inputActive.final_date}
-            onChange={(e) => handleInput(e)}
+            value={finalDate}
+            required
+            max={fullDate}
+            onChange={(e) => setFinalDate(e.currentTarget.value)}
           />
           <button>POST DATA</button>
         </form>
       </section>
-      <Graphic loading={loading} actives={actives} />
+      <Graphic
+        loading={loading}
+        actives={actives}
+        activeName={activeName}
+        initialDate={initialDate}
+        finalDate={finalDate}
+      />
     </>
   );
 };
