@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import styles from "./Graphic.module.css";
 import Chart from "./Chart/";
 import dateDiffInDays from "../../../../helpers/dateDiffInDays";
+import fullDate from "../../../../helpers/fullDate"
 
 type GraphicProps = {
   loading: Boolean;
@@ -30,14 +31,17 @@ const Graphic = ({
   initialDate,
   finalDate,
 }: GraphicProps) => {
-  const a = new Date(initialDate);
-  const b = new Date(finalDate);
-  let difference = dateDiffInDays(a, b);
+  const consultInitDate = new Date(initialDate);
+  const consultFinalDate = new Date(finalDate);
+  const todayDate = new Date(fullDate);
+  const differenceInitialAndFinalDate = dateDiffInDays(consultInitDate, consultFinalDate);
+  const diffTodayAndInitial = dateDiffInDays(consultInitDate, todayDate);
+  const diffTodayAndFinal = dateDiffInDays(consultFinalDate, todayDate);
 
-  const dateLabel = Object.keys(actives).slice(0, difference);
+  const dateLabel = Object.keys(actives).slice(diffTodayAndFinal, diffTodayAndInitial   );
   const activeData = Object.values(actives).map(
     (element: any) => element["4. close"]
-  ).slice(0, difference);
+  ).slice(diffTodayAndFinal, diffTodayAndInitial);
 
   const [chartData, setChartData] = useState<ChartProps>();
 
@@ -55,7 +59,7 @@ const Graphic = ({
     });
   }, [actives]);
 
-  if (difference < 0) {
+  if (differenceInitialAndFinalDate < 0) {
     return (
       <h3>Por favor, preencha uma data de início menor que a data final.</h3>
     );
