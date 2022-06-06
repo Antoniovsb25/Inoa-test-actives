@@ -5,12 +5,11 @@ var bodyParser = require("body-parser");
 
 const app = express();
 
-var urlencodedParser = bodyParser.urlencoded({ extended: false });
 app.use(bodyParser.json());
 app.use(cors());
 
 const API_KEY = "9QEY0OOLLBS1YIX5";
-const PORT = "4567";
+const PORT = process.env.PORT || "4567";
 
 app.get("/", async (req, res) => {
   try {
@@ -23,4 +22,4 @@ app.get("/", async (req, res) => {
   }
 });
 
-app.listen(PORT);
+app.listen(PORT, () => console.log(`Server is running in port ${PORT}`));
