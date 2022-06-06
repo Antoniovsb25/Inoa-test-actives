@@ -1,12 +1,26 @@
+import { useState, useEffect } from "react";
 import styles from "./Graphic.module.css";
+import Chart from "./Chart/";
 import dateDiffInDays from "../../../../helpers/dateDiffInDays";
 
 type GraphicProps = {
   loading: Boolean;
-  actives: Object;
+  actives: any;
   activeName: string;
   initialDate: string;
   finalDate: string;
+};
+
+type ChartProps = {
+  labels: string[];
+  datasets: [
+    {
+      label: string;
+      data: any[];
+      borderColor: string,
+      backgroundColor: string
+    }
+  ];
 };
 
 const Graphic = ({
@@ -16,33 +30,44 @@ const Graphic = ({
   initialDate,
   finalDate,
 }: GraphicProps) => {
+  const a = new Date(initialDate);
+  const b = new Date(finalDate);
+  let difference = dateDiffInDays(a, b);
 
-  const a = new Date(initialDate),
-    b = new Date(finalDate)
-    let difference = dateDiffInDays(a, b);
-    if (difference < 0) {
-        return (<h3>Por favor, preencha uma data de início menor que a data final.</h3>)
-    }
-  const dailyActives = Object.entries(actives);
-  const arrDailyActives = Object.entries(dailyActives[0][1]);
-  const filteredDailyActives = arrDailyActives.filter(
-    (element: any, index: number) => index <= difference
-  );
+  const dateLabel = Object.keys(actives).slice(0, difference);
+  const activeData = Object.values(actives).map(
+    (element: any) => element["4. close"]
+  ).slice(0, difference);
+
+  const [chartData, setChartData] = useState<ChartProps>();
+
+  useEffect(() => {
+    setChartData({
+      labels: dateLabel,
+      datasets: [
+        {
+          label: activeName,
+          data: activeData,
+          borderColor: 'rgb(53, 162, 235)',
+          backgroundColor: 'rgba(53, 162, 235, 0.5)'
+        },
+      ],
+    });
+  }, [actives]);
+
+  if (difference < 0) {
+    return (
+      <h3>Por favor, preencha uma data de início menor que a data final.</h3>
+    );
+  }
+
+  if (loading) {
+    return <h2>Loading...</h2>;
+  }
 
   return (
     <section className={styles.graphicContainer}>
-      <ul>
-        {loading ? (
-          <h2>Loading...</h2>
-        ) : (
-          Object.keys(actives).length !== 0 &&
-          filteredDailyActives.map((element: any, index: number) => (
-            <li key={index}>
-              {element[0]} = {element[1]["4. close"]}
-            </li>
-          ))
-        )}
-      </ul>
+      {chartData && <Chart chartData={chartData} />}
     </section>
   );
 };

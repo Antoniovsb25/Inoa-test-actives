@@ -3,9 +3,11 @@
     margin: 2rem auto;
     padding: 20px;
     max-width: 510px;
-    height: 410px;
+    height: 450px;
     border-radius: 5px;
     box-shadow: -1px 1px 14px rgb(0 0 0 / 19%);
+    display: flex;
+    flex-direction: column;
 }
 
 .form {
@@ -30,8 +32,21 @@
     color: #FFFFFF;
     font-weight: 700;
     cursor: pointer;
+    margin-bottom: 10px;
 }
 
 .form button:hover {
     background-color: #1a6d1a;
+}
+
+.deleteButton {
+    background-color: red;
+    border: none;
+    border-radius: 10px;
+    height: 30px;
+    width: 50%;
+    margin: auto;
+    color: #FFFFFF;
+    font-weight: 700;
+    cursor: pointer;
 }

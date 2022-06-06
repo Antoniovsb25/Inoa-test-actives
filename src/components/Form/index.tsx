@@ -6,7 +6,7 @@ import fullDate from "../../helpers/fullDate.js";
 
 const Form = () => {
   const [loading, setLoading] = useState(false);
-  const [actives, setActives] = useState({active: 0});
+  const [actives, setActives] = useState([]);
   const [activeName, setActiveName] = useState("");
   const [initialDate, setInitialDate] = useState("");
   const [finalDate, setFinalDate] = useState(fullDate);
@@ -20,9 +20,7 @@ const Form = () => {
       );
       setLoading(false);
       if (data["Time Series (Daily)"]) {
-        setActives(prevState => {
-            return {...prevState, active: data["Time Series (Daily)"]}
-        });
+        setActives(data["Time Series (Daily)"]);
       }
     } catch (error) {
       console.log(error);
@@ -66,16 +64,19 @@ const Form = () => {
             max={fullDate}
             onChange={(e) => setFinalDate(e.currentTarget.value)}
           />
-          <button>POST DATA</button>
+          <button>Pesquisar Ativo</button>
         </form>
+        <button className={styles.deleteButton} onClick={() => setActives([])}>Deletar dados</button>
       </section>
-      <Graphic
-        loading={loading}
-        actives={actives}
-        activeName={activeName}
-        initialDate={initialDate}
-        finalDate={finalDate}
-      />
+      {actives.length !== 0 && (
+        <Graphic
+          loading={loading}
+          actives={actives}
+          activeName={activeName}
+          initialDate={initialDate}
+          finalDate={finalDate}
+        />
+      )}
     </>
   );
 };
