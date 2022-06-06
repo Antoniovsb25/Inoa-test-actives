@@ -31,8 +31,8 @@ const Form = () => {
   return (
     <>
       <section className={styles.formContainer}>
-        <h1>
-          consulte o preço de fechamento diário de um ou mais ativos da B3
+        <h1 className={styles.formTitle}>
+          Consulte o preço de fechamento diário de um ou mais ativos da B3
         </h1>
         <form className={styles.form} onSubmit={postActivesName}>
           <label htmlFor="active">Nome do ativo: </label>

@@ -48,8 +48,8 @@ const Graphic = ({
         {
           label: activeName,
           data: activeData,
-          borderColor: 'rgb(53, 162, 235)',
-          backgroundColor: 'rgba(53, 162, 235, 0.5)'
+          borderColor: '#9d870c',
+          backgroundColor: '#9d870c'
         },
       ],
     });

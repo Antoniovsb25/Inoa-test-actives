@@ -3,7 +3,7 @@
     margin: 2rem auto;
     padding: 20px;
     max-width: 510px;
-    height: 450px;
+    height: auto;
     border-radius: 5px;
     box-shadow: -1px 1px 14px rgb(0 0 0 / 19%);
     display: flex;
@@ -15,15 +15,20 @@
     flex-direction: column;
 }
 
+.formTitle {
+    text-align: center;
+}
+
 .form input {
-    height: 30px;
+    height: 35px;
     border-radius: 5px;
     margin: 16px 0;
     font-size: 16px;
+    border: 1px solid rgba(0, 0, 0, 0.15)
 }
 
 .form button {
-    background-color: #228b22;
+    background-color: #2a728e;
     border: none;
     border-radius: 10px;
     height: 30px;
@@ -36,11 +41,11 @@
 }
 
 .form button:hover {
-    background-color: #1a6d1a;
+    background-color: #516d7d;
 }
 
 .deleteButton {
-    background-color: red;
+    background-color: #f93f03;
     border: none;
     border-radius: 10px;
     height: 30px;
