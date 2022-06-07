@@ -1,6 +1,6 @@
 .formContainer {
     background-color: #FFFFFF;
-    margin: 2rem auto;
+    margin: 32px auto;
     padding: 20px;
     max-width: 510px;
     height: auto;
@@ -22,9 +22,15 @@
 .form input {
     height: 35px;
     border-radius: 5px;
-    margin: 16px 0;
+    margin: 0 0 16px 0;
     font-size: 16px;
     border: 1px solid rgba(0, 0, 0, 0.15)
+}
+
+.form .errorMsg {
+    margin: 0;
+    font-size: 14px;
+    color: #f93f03;
 }
 
 .form button {
@@ -54,4 +60,17 @@
     color: #FFFFFF;
     font-weight: 700;
     cursor: pointer;
+}
+
+.message {
+    color: #FFFFFF;
+    font-size: 30px;
+    margin: 32px 0;
+    text-align: center;
+}
+
+@media (max-width: 600px) {
+    .formContainer {
+        margin: 32px 10px;
+    }
 }

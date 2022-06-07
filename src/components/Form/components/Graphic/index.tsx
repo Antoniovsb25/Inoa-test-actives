@@ -2,11 +2,18 @@ import { useState, useEffect } from "react";
 import styles from "./Graphic.module.css";
 import Chart from "./Chart/";
 import dateDiffInDays from "../../../../helpers/dateDiffInDays";
-import fullDate from "../../../../helpers/fullDate"
+import fullDate from "../../../../helpers/fullDate";
+
+type activesProps = {
+    actives: {},
+    final: string,
+    initial: string,
+    name: string
+}
 
 type GraphicProps = {
   loading: Boolean;
-  actives: any;
+  actives: activesProps[];
   activeName: string;
   initialDate: string;
   finalDate: string;
@@ -14,14 +21,7 @@ type GraphicProps = {
 
 type ChartProps = {
   labels: string[];
-  datasets: [
-    {
-      label: string;
-      data: any[];
-      borderColor: string,
-      backgroundColor: string
-    }
-  ];
+  datasets?: Object[];
 };
 
 const Graphic = ({
@@ -31,42 +31,47 @@ const Graphic = ({
   initialDate,
   finalDate,
 }: GraphicProps) => {
+  const [chartData, setChartData] = useState<ChartProps>();
+
   const consultInitDate = new Date(initialDate);
   const consultFinalDate = new Date(finalDate);
   const todayDate = new Date(fullDate);
-  const differenceInitialAndFinalDate = dateDiffInDays(consultInitDate, consultFinalDate);
+  const differenceInitialAndFinalDate = dateDiffInDays(
+    consultInitDate,
+    consultFinalDate
+  );
   const diffTodayAndInitial = dateDiffInDays(consultInitDate, todayDate);
   const diffTodayAndFinal = dateDiffInDays(consultFinalDate, todayDate);
 
-  const dateLabel = Object.keys(actives).slice(diffTodayAndFinal, diffTodayAndInitial   );
-  const activeData = Object.values(actives).map(
-    (element: any) => element["4. close"]
-  ).slice(diffTodayAndFinal, diffTodayAndInitial);
-
-  const [chartData, setChartData] = useState<ChartProps>();
+  const dateLabel = Object.keys(actives[actives.length - 1].actives).slice(
+    diffTodayAndFinal,
+    diffTodayAndInitial
+  );
 
   useEffect(() => {
     setChartData({
       labels: dateLabel,
-      datasets: [
-        {
-          label: activeName,
-          data: activeData,
-          borderColor: '#9d870c',
-          backgroundColor: '#9d870c'
-        },
-      ],
+      datasets: actives.map((element: any) => {
+        const randomColor = "#" + ((1<<24)*Math.random() | 0).toString(16);
+        return {
+          label: element.name,
+          data: Object.values(element.actives)
+            .map((element: any) => element["4. close"])
+            .slice(diffTodayAndFinal, diffTodayAndInitial),
+          borderColor: randomColor,
+          backgroundColor: randomColor,
+        };
+      }),
     });
   }, [actives]);
 
   if (differenceInitialAndFinalDate < 0) {
     return (
-      <h3>Por favor, preencha uma data de início menor que a data final.</h3>
+      <p className={styles.message}>
+        Por favor, preencha uma data de início menor ou igual à data final da
+        pesquisa.
+      </p>
     );
-  }
-
-  if (loading) {
-    return <h2>Loading...</h2>;
   }
 
   return (

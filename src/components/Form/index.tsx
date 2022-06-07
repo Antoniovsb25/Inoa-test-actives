@@ -4,9 +4,17 @@ import axios from "axios";
 import styles from "./Form.module.css";
 import fullDate from "../../helpers/fullDate.js";
 
+type activesProps = {
+  name: string;
+  initial: string;
+  final: string;
+  actives: Object[];
+}[];
+
 const Form = () => {
   const [loading, setLoading] = useState(false);
-  const [actives, setActives] = useState([]);
+  const [errorMsg, setErrorMsg] = useState(false);
+  const [actives, setActives] = useState<activesProps>([]);
   const [activeName, setActiveName] = useState("");
   const [initialDate, setInitialDate] = useState("");
   const [finalDate, setFinalDate] = useState(fullDate);
@@ -20,12 +28,27 @@ const Form = () => {
       );
       setLoading(false);
       if (data["Time Series (Daily)"]) {
-        setActives(data["Time Series (Daily)"]);
+        setErrorMsg(false);
+        setActives((current) => [
+          ...current,
+          {
+            name: activeName,
+            initial: initialDate,
+            final: finalDate,
+            actives: data["Time Series (Daily)"],
+          },
+        ]);
+      } else {
+        setErrorMsg(true);
       }
     } catch (error) {
-      console.log(error);
+      console.log("Something went wrong when fetching data", error);
       setLoading(false);
     }
+  };
+
+  const deleteHandler = () => {
+    setActives([]);
   };
 
   return (
@@ -36,6 +59,7 @@ const Form = () => {
         </h1>
         <form className={styles.form} onSubmit={postActivesName}>
           <label htmlFor="active">Nome do ativo: </label>
+          {errorMsg && <p className={styles.errorMsg}>Ativo não encontrado</p>}
           <input
             type="text"
             id="active"
@@ -66,16 +90,22 @@ const Form = () => {
           />
           <button>Pesquisar Ativo</button>
         </form>
-        <button className={styles.deleteButton} onClick={() => setActives([])}>Deletar dados</button>
+        <button className={styles.deleteButton} onClick={deleteHandler}>
+          Deletar dados
+        </button>
       </section>
-      {actives.length !== 0 && (
-        <Graphic
-          loading={loading}
-          actives={actives}
-          activeName={activeName}
-          initialDate={initialDate}
-          finalDate={finalDate}
-        />
+      {loading ? (
+        <p className={styles.message}>Loading...</p>
+      ) : (
+        actives.length !== 0 && (
+          <Graphic
+            loading={loading}
+            actives={actives}
+            activeName={activeName}
+            initialDate={initialDate}
+            finalDate={finalDate}
+          />
+        )
       )}
     </>
   );
