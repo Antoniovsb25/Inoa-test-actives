@@ -24,7 +24,7 @@ const Form = () => {
     setLoading(true);
     try {
       const { data } = await axios.get(
-        `http://localhost:4567/?activeName=${activeName}&initialDate=${initialDate}&finalDate=${finalDate}`
+        `https://inoa-test-backend.vercel.app/?activeName=${activeName}&initialDate=${initialDate}&finalDate=${finalDate}`
       );
       setLoading(false);
       if (data["Time Series (Daily)"]) {
