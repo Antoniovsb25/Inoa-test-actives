@@ -1,5 +1,5 @@
 # Inoa-test-actives
-## [Link to the app here](https://www.alphavantage.co/)
+## [Link to the app here](https://inoa-test-actives.vercel.app/)
 Project created for Inoa's frontend developer position.
 
 # Objective
